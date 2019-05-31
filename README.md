@@ -41,3 +41,7 @@ endif()
 
 Then, the user has to supply the packages on their own, be it through Vcpkg or manually specifying their locations.
 
+
+# Acknowledgments
+
+Automate-VCPKG was based on https://github.com/sutambe/cpptruths/blob/vcpkg_cmake_blog/cpp0x/vcpkg_test/CMakeLists.txt.
