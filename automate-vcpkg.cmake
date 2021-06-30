@@ -81,34 +81,33 @@ if (WIN32)
     endif()
 endif()
 
-# Find out whether the user supplied their own VCPKG toolchain file
-if(NOT DEFINED ${CMAKE_TOOLCHAIN_FILE})
-    if(NOT DEFINED ENV{VCPKG_ROOT})
-        if(WIN32)
-            set(VCPKG_ROOT ${VCPKG_FALLBACK_ROOT})
-        else()
-            set(VCPKG_ROOT ${VCPKG_FALLBACK_ROOT})
-        endif()
+if(NOT DEFINED ENV{VCPKG_ROOT})
+    if(WIN32)
+        set(VCPKG_ROOT ${VCPKG_FALLBACK_ROOT})
     else()
-        set(VCPKG_ROOT $ENV{VCPKG_ROOT})
+        set(VCPKG_ROOT ${VCPKG_FALLBACK_ROOT})
     endif()
-    
-    # We know this wasn't set before so we need point the toolchain file to the newly found VCPKG_ROOT
-    set(CMAKE_TOOLCHAIN_FILE ${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake CACHE STRING "")
-
-    # Just setting vcpkg.cmake as toolchain file does not seem to actually pull in the code
-    include(${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake)
-
-    set(AUTOMATE_VCPKG_USE_SYSTEM_VCPKG OFF)
 else()
-    # VCPKG_ROOT has been defined by the toolchain file already
-    set(AUTOMATE_VCPKG_USE_SYSTEM_VCPKG ON)
+    set(VCPKG_ROOT $ENV{VCPKG_ROOT})
 endif()
-
 
 # Installs a new copy of Vcpkg or updates an existing one
 macro(vcpkg_bootstrap)
     _install_or_update_vcpkg()
+
+    # Find out whether the user supplied their own VCPKG toolchain file
+    if(NOT DEFINED ${CMAKE_TOOLCHAIN_FILE})
+        # We know this wasn't set before so we need point the toolchain file to the newly found VCPKG_ROOT
+        set(CMAKE_TOOLCHAIN_FILE ${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake CACHE STRING "")
+    
+        # Just setting vcpkg.cmake as toolchain file does not seem to actually pull in the code
+        include(${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake)
+    
+        set(AUTOMATE_VCPKG_USE_SYSTEM_VCPKG OFF)
+    else()
+        # VCPKG_ROOT has been defined by the toolchain file already
+        set(AUTOMATE_VCPKG_USE_SYSTEM_VCPKG ON)
+    endif()
     
     message(STATUS "Automate VCPKG status:")
     message(STATUS "  VCPKG_ROOT.....: ${VCPKG_ROOT}")
