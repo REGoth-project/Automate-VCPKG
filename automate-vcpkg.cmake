@@ -81,17 +81,17 @@ if (WIN32)
     endif()
 endif()
 
+if(NOT DEFINED VCPKG_ROOT)
+    if(NOT DEFINED ENV{VCPKG_ROOT})
+	    set(VCPKG_ROOT ${VCPKG_FALLBACK_ROOT})
+    else()
+        set(VCPKG_ROOT $ENV{VCPKG_ROOT})
+    endif()
+endif()
+
 # Installs a new copy of Vcpkg or updates an existing one
 macro(vcpkg_bootstrap)
     _install_or_update_vcpkg()
-
-    if(NOT DEFINED VCPKG_ROOT)
-        if(NOT DEFINED ENV{VCPKG_ROOT})
-		    set(VCPKG_ROOT ${VCPKG_FALLBACK_ROOT})
-        else()
-            set(VCPKG_ROOT $ENV{VCPKG_ROOT})
-        endif()
-	endif()
 
     # Find out whether the user supplied their own VCPKG toolchain file
     if(NOT DEFINED ${CMAKE_TOOLCHAIN_FILE})
